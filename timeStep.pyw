@@ -2,6 +2,10 @@
 """
 Created by Vincenzo Sammartano
 email:  v.sammartano@gmail.com
+ruined by Gareth Knopp
+email: gknopp@engineeredbydesign.co.uk
+
+added def isfloat
 """
 import tkinter as tk
 from tkinter import  messagebox
@@ -49,26 +53,38 @@ frame01.config(borderwidth=4)
 
 ##Functions
 
+def isfloat(value):
+  try:
+    float(value)
+    return True
+  except ValueError:
+    return False
+
 def EX():
     root.destroy()
 def CalT():
     try:
-        omega = float(FS_.get())
-        omega_s = omega/60 #round per sec
-        nb = int(NB_.get()) #number of blades
-        nbi = 360/nb #angle between 2 blades
-        omega_deg = omega_s * 360 #deg per sec
-        res = float(RE_.get()) #spatial resolution
-        
-        time_st = nbi/omega_deg/res
-        total_rev = 5
-        total_flow = total_rev * (1/omega_s)
-        total_its = (total_rev * (total_flow / time_st))
-        RES = [time_st, total_flow,total_its]
-        printOut(RES)
-
+        if isfloat(FS_.get()) and isfloat(NB_.get()) and isfloat(RE_.get()):
+            omega = float(FS_.get())
+            omega_s = omega/60 #round per sec
+            nb = int(NB_.get()) #number of blades
+            if nb <2:
+                 messagebox.showwarning("Warning","Impeller must have at least 2 blades!")
+            nbi = 360/nb #angle between 2 blades
+            omega_deg = omega_s * 360 #deg per sec
+            res = float(RE_.get()) #spatial resolution
+            
+            time_st = nbi/omega_deg/res
+            total_rev = 5
+            total_flow = total_rev * (1/omega_s)
+            total_its = (total_rev * (total_flow / time_st))
+            RES = [time_st, total_flow,total_its]
+            printOut(RES)
+        else:
+            messagebox.showwarning("Warning","Input Values must be numbers!")
     except ZeroDivisionError:
-        messagebox.showwarning("Warning","Impeller speed must be greater than 0!")
+        messagebox.showwarning("Warning","Impeller speed must be greater than 0!\n\nFan Blades must be at least 2 blades!")
+
 
 def printOut(res):
     labels = ["{:6.5f}".format(res[0]) ,"{:6.5f}".format(res[1]), "{:5.0f}".format(res[2])]              
